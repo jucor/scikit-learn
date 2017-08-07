@@ -7,7 +7,7 @@ and pairwise metrics and distance computations.
 from .ranking import auc
 from .ranking import average_precision_score
 from .ranking import coverage_error
-from .ranking import detection_error_tradeoff
+from .ranking import detection_error_tradeoff_curve
 from .ranking import label_ranking_average_precision_score
 from .ranking import label_ranking_loss
 from .ranking import precision_recall_curve
@@ -75,7 +75,7 @@ __all__ = [
     'confusion_matrix',
     'consensus_score',
     'coverage_error',
-    'detection_error_tradeoff',
+    'detection_error_tradeoff_curve',
     'euclidean_distances',
     'explained_variance_score',
     'f1_score',

@@ -1006,7 +1006,7 @@ if the predicted outputs have been binarized.
 Detection error tradeoff (DET)
 ---------------------------------------
 
-The function :func:`detection_error_tradeoff` computes the
+The function :func:`detection_error_tradeoff_curve` computes the
 `detection error tradeoff curve, or DET curve <https://en.wikipedia.org/wiki/Detection_error_tradeoff>`_.
 Quoting Wikipedia :
 
@@ -1015,16 +1015,16 @@ Quoting Wikipedia :
 This function requires the true binary
 value and the target scores, which can either be probability estimates of the
 positive class, confidence values, or binary decisions.
-Here is a small example of how to use the :func:`detection_error_tradeoff` function::
+Here is a small example of how to use the :func:`detection_error_tradeoff_curve` function::
 
     >>> import numpy as np
-    >>> from sklearn.metrics import detection_error_tradeoff
+    >>> from sklearn.metrics import detection_error_tradeoff_curve
     >>> y_true = np.array([0, 0, 1, 1])
     >>> y_scores = np.array([0.1, 0.4, 0.35, 0.8])
-    >>> fps, fns, thresholds = detection_error_tradeoff(y_true, y_scores)
-    >>> fps
+    >>> fap, frr, thresholds = detection_error_tradeoff_curve(y_true, y_scores)
+    >>> fap
     array([ 0.5,  0.5,  0. ])
-    >>> fns
+    >>> frr
     array([ 0. ,  0.5,  0.5])
     >>> thresholds
     array([ 0.35,  0.4 ,  0.8 ])

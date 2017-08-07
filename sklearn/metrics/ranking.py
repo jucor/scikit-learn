@@ -185,8 +185,8 @@ def average_precision_score(y_true, y_score, average="macro",
                                  average, sample_weight=sample_weight)
 
 
-def detection_error_tradeoff(y_true, y_score, pos_label=None,
-                             sample_weight=None):
+def detection_error_tradeoff_curve(y_true, y_score, pos_label=None,
+                                   sample_weight=None):
     """Compute error rates for different probability thresholds
 
     Note: this implementation is restricted to the binary classification task.
@@ -207,17 +207,15 @@ def detection_error_tradeoff(y_true, y_score, pos_label=None,
 
     Returns
     -------
-    fps : array, shape = [n_thresholds]
-        A count of false positives, at index i being the number of negative
-        samples assigned a score >= thresholds[i]. The total number of
-        negative samples is equal to fps[-1] (thus true negatives are given by
-        fps[-1] - fps).
+    fap : array, shape = [n_thresholds]
+        False acceptance propability such that element i is the false
+        acceptance propability of predictions with score >= thresholds[i]. This
+        is also known as false positive rate.
 
-    fns : array, shape = [n_thresholds]
-        A count of false negatives, at index i being the number of positive
-        samples assigned a score < thresholds[i]. The total number of
-        positive samples is equal to tps[-1] (thus false negatives are given by
-        tps[-1] - tps).
+    frr : array, shape = [n_thresholds]
+        False rejection rate such that element i is the false rejection rate
+        of predictions with score >= thresholds[i]. This is sometimes referred
+        to as missed detection rate.
 
     thresholds : array, shape = [n_thresholds]
         Decreasing score values.
@@ -236,13 +234,13 @@ def detection_error_tradeoff(y_true, y_score, pos_label=None,
     Examples
     --------
     >>> import numpy as np
-    >>> from sklearn.metrics import detection_error_tradeoff
+    >>> from sklearn.metrics import detection_error_tradeoff_curve
     >>> y_true = np.array([0, 0, 1, 1])
     >>> y_scores = np.array([0.1, 0.4, 0.35, 0.8])
-    >>> fps, fns, thresholds = detection_error_tradeoff(y_true, y_scores)
-    >>> fps
+    >>> fap, frr, thresholds = detection_error_tradeoff_curve(y_true, y_scores)
+    >>> fap
     array([ 0.5,  0.5,  0. ])
-    >>> fns
+    >>> frr
     array([ 0. ,  0.5,  0.5])
     >>> thresholds
     array([ 0.35,  0.4 ,  0.8 ])
@@ -252,15 +250,15 @@ def detection_error_tradeoff(y_true, y_score, pos_label=None,
                                              pos_label=pos_label,
                                              sample_weight=sample_weight)
     fns = tps[-1] - tps
-    tp_count = tps[-1]
-    tn_count = (fps[-1] - fps)[0]
+    p_count = tps[-1]
+    n_count = fps[-1]
 
     # start with false positives is zero and stop with false negatives zero
     # and reverse the outputs so list of false positives is decreasing
     last_ind = tps.searchsorted(tps[-1]) + 1
     first_ind = fps[::-1].searchsorted(fps[0])
     sl = range(first_ind, last_ind)[::-1]
-    return fps[sl] / tp_count, fns[sl] / tn_count, thresholds[sl]
+    return fps[sl] / n_count, fns[sl] / p_count, thresholds[sl]
 
 
 def roc_auc_score(y_true, y_score, average="macro", sample_weight=None):
